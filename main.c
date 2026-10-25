@@ -11,10 +11,6 @@
 /* ************************************************************************** */
 
 #include "codexion.h"
-#include <limits.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
 
 int	ft_atol(const char *str, long *result)
 {
@@ -74,11 +70,28 @@ int	parser_args(t_config *config, char **argv)
 
 int	main(int argc, char **argv)
 {
-	t_config	config;
+	t_simulation sim;
 
 	if (argc != 9)
 		return (1);
-	if (!parser_args(&config, argv))
+	if (!parser_args(&sim.config, argv))
 		return (1);
+	sim.coders = NULL;
+	sim.dongles = NULL;
+	sim.start_time = 0;
+	sim.stopped = 0;
+	if (!init_coders(&sim))
+		return (1);
+	if (!init_dongles(&sim))
+	{
+		free(sim.coders);
+		return (1);
+	}
+	if (!run_simulation(&sim))
+	{
+		destroy_simulation(&sim);
+		return (1);
+	}
+	destroy_simulation(&sim);
 	return (0);
 }
