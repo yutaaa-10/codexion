@@ -10,7 +10,11 @@ SRCS = src/main.c \
        src/init/init_dongles.c \
        src/utils/destroy_simulation.c \
        src/simulation/run_simulation.c \
-       src/simulation/coder_routine.c 
+       src/simulation/coder_routine.c \
+       src/utils/time_utils.c \
+       src/simulation/dongle.c \
+       src/simulation/simulation_state.c \
+       src/simulation/monitor_routine.c
 
 
 OBJS = $(SRCS:.c=.o)

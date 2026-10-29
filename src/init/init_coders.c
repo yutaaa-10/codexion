@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_coders.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yukurosa <yukurosa@student.42tokyo.jp>     #+#  +:+       +#+        */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-10-25 04:17:32 by yukurosa          #+#    #+#             */
-/*   Updated: 2026-10-25 04:17:32 by yukurosa         ###   ########.fr       */
+/*   Created: 2026/10/25 04:17:32 by yukurosa          #+#    #+#             */
+/*   Updated: 2026/10/29 17:17:01 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ int	init_coders(t_simulation *sim)
 		sim->coders[i].right_dongle = i;
 		sim->coders[i].last_compile_start = 0;
 		sim->coders[i].compile_count = 0;
+		sim->coders[i].sim = sim;
 		i++;
 	}
 	return (1);
