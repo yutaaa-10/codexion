@@ -1,5 +1,4 @@
 #include "codexion.h"
-#include <stdlib.h>
 
 void	destroy_simulation(t_simulation *sim)
 {

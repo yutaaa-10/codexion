@@ -3,13 +3,15 @@ NAME = codexion
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -pthread
+CPPFLAGS = -I.
 
-SRCS = main.c \
-       init_coders.c \
-       init_dongles.c \
-       destroy_simulation.c \
-       run_simulation.c \
-       coder_routine.c
+SRCS = src/main.c \
+       src/init/init_coders.c \
+       src/init/init_dongles.c \
+       src/utils/destroy_simulation.c \
+       src/simulation/run_simulation.c \
+       src/simulation/coder_routine.c 
+
 
 OBJS = $(SRCS:.c=.o)
 
@@ -19,7 +21,7 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
 %.o: %.c codexion.h
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJS)
