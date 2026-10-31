@@ -6,7 +6,7 @@
 /*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/25 04:17:32 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/10/29 17:17:01 by yukurosa         ###   ########.fr       */
+/*   Updated: 2026/10/30 11:03:37 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 int	init_coders(t_simulation *sim)
 {
-	int i;
-	int n;
+	int	i;
+	int	n;
 
 	n = sim->config.number_of_coders;
 	sim->coders = malloc(sizeof(t_coder) * n);

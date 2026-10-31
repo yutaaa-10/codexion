@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   time_utils.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/30 11:01:10 by yukurosa          #+#    #+#             */
+/*   Updated: 2026/10/30 11:01:13 by yukurosa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 long	get_time_ms(void)
@@ -11,8 +23,8 @@ long	get_time_ms(void)
 
 int	precise_sleep(t_simulation *sim, long duration_ms)
 {
-	long start;
-	long now;
+	long	start;
+	long	now;
 
 	start = get_time_ms();
 	if (start < 0)

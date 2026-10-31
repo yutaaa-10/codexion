@@ -1,62 +1,85 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   coder_routine.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/30 11:00:32 by yukurosa          #+#    #+#             */
+/*   Updated: 2026/10/30 11:05:50 by yukurosa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
+
+static int	has_finished(t_coder *coder)
+{
+	t_simulation	*sim;
+	int				finished;
+
+	sim = coder->sim;
+	pthread_mutex_lock(&sim->state_mutex);
+	finished = (coder->compile_count
+			>= sim->config.number_of_compiles_required);
+	pthread_mutex_unlock(&sim->state_mutex);
+	return (finished);
+}
+
+static int	wait_for_dongles(t_coder *coder)
+{
+	while (!is_simulation_stopped(coder->sim))
+	{
+		if (try_acquire_dongles(coder))
+			return (1);
+		usleep(1000);
+	}
+	return (0);
+}
+
+static int	compile_code(t_coder *coder)
+{
+	if (!start_compiling(coder))
+	{
+		release_dongles(coder);
+		return (0);
+	}
+	if (!precise_sleep(coder->sim, coder->sim->config.time_to_compile))
+	{
+		release_dongles(coder);
+		return (0);
+	}
+	release_dongles(coder);
+	finish_compiling(coder);
+	return (1);
+}
+
+static int	debug_and_refactor(t_coder *coder)
+{
+	if (!log_coder_action(coder, "is debugging"))
+		return (0);
+	if (!precise_sleep(coder->sim, coder->sim->config.time_to_debug))
+		return (0);
+	if (!log_coder_action(coder, "is refactoring"))
+		return (0);
+	if (!precise_sleep(coder->sim, coder->sim->config.time_to_refactor))
+		return (0);
+	return (1);
+}
 
 void	*coder_routine(void *arg)
 {
-	t_coder *coder;
-	t_simulation *sim;
-	int acquired;
+	t_coder	*coder;
 
 	coder = (t_coder *)arg;
-	sim = coder->sim;
-	while (!is_simulation_stopped(sim))
+	while (!is_simulation_stopped(coder->sim))
 	{
-		pthread_mutex_lock(&sim->state_mutex);
-		if (coder->compile_count >= sim->config.number_of_compiles_required)
-		{
-			pthread_mutex_unlock(&sim->state_mutex);
+		if (has_finished(coder))
 			break ;
-		}
-		pthread_mutex_unlock(&sim->state_mutex);
-
-		acquired = 0;
-		while (!is_simulation_stopped(sim))
-		{
-			if (try_acquire_dongles(coder))
-			{
-				acquired = 1;
-				break ;
-			}
-			usleep(1000);
-		}
-		if (!acquired)
+		if (!wait_for_dongles(coder))
 			break ;
-
-		/* 変更①：コンパイル開始 */
-		if (!start_compiling(coder))
-		{
-			release_dongles(coder);
+		if (!compile_code(coder))
 			break ;
-		}
-
-		/* 変更②：コンパイル中の停止に対応 */
-		if (!precise_sleep(sim, sim->config.time_to_compile))
-		{
-			release_dongles(coder);
-			break ;
-		}
-		release_dongles(coder);
-		finish_compiling(coder);
-
-		/* 変更③：デバッグ */
-		if (!log_coder_action(coder, "is debugging"))
-			break ;
-		if (!precise_sleep(sim, sim->config.time_to_debug))
-			break ;
-
-		/* 変更④：リファクタリング */
-		if (!log_coder_action(coder, "is refactoring"))
-			break ;
-		if (!precise_sleep(sim, sim->config.time_to_refactor))
+		if (!debug_and_refactor(coder))
 			break ;
 	}
 	return (NULL);

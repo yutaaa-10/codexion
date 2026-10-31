@@ -6,7 +6,7 @@
 /*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/24 08:06:42 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/10/29 18:46:26 by yukurosa         ###   ########.fr       */
+/*   Updated: 2026/10/30 11:02:02 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,12 @@
 # include <unistd.h>
 
 typedef enum e_scheduler
-
 {
-
 	FIFO,
 	EDF
 }							t_scheduler;
 
 typedef struct s_config
-
 {
 	int						number_of_coders;
 	long					time_to_burnout;
@@ -44,7 +41,6 @@ typedef struct s_config
 }							t_config;
 
 typedef struct s_dongle
-
 {
 	pthread_mutex_t			mutex;
 	int						in_use;
@@ -56,7 +52,6 @@ typedef struct s_dongle
 typedef struct s_simulation	t_simulation;
 
 typedef struct s_coder
-
 {
 	int						id;
 	int						left_dongle;
@@ -77,6 +72,7 @@ struct						s_simulation
 	pthread_mutex_t			state_mutex;
 	pthread_t				monitor_thread;
 };
+
 int							parser_args(t_config *config, char **argv);
 int							init_coders(t_simulation *sim);
 int							init_dongles(t_simulation *sim);

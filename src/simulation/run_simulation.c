@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   run_simulation.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/30 11:00:54 by yukurosa          #+#    #+#             */
+/*   Updated: 2026/10/30 11:00:57 by yukurosa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 static int	join_threads(t_simulation *sim, int count)
@@ -28,19 +40,12 @@ static void	init_start_times(t_simulation *sim)
 	}
 }
 
-int	run_simulation(t_simulation *sim)
+static int	start_coder_threads(t_simulation *sim)
 {
-	int i;
-	int n;
-	int status;
+	int	i;
 
-	n = sim->config.number_of_coders;
-	sim->start_time = get_time_ms();
-	if (sim->start_time == -1)
-		return (0);
-	init_start_times(sim);
 	i = 0;
-	while (i < n)
+	while (i < sim->config.number_of_coders)
 	{
 		if (pthread_create(&sim->coders[i].thread, NULL, coder_routine,
 				&sim->coders[i]) != 0)
@@ -51,13 +56,26 @@ int	run_simulation(t_simulation *sim)
 		}
 		i++;
 	}
+	return (1);
+}
+
+int	run_simulation(t_simulation *sim)
+{
+	int	status;
+
+	sim->start_time = get_time_ms();
+	if (sim->start_time == -1)
+		return (0);
+	init_start_times(sim);
+	if (!start_coder_threads(sim))
+		return (0);
 	if (pthread_create(&sim->monitor_thread, NULL, monitor_routine, sim) != 0)
 	{
 		stop_simulation(sim);
-		join_threads(sim, n);
+		join_threads(sim, sim->config.number_of_coders);
 		return (0);
 	}
-	status = join_threads(sim, n);
+	status = join_threads(sim, sim->config.number_of_coders);
 	if (pthread_join(sim->monitor_thread, NULL) != 0)
 		status = 0;
 	return (status);

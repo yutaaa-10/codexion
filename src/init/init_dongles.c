@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_coders.c                                      :+:      :+:    :+:   */
+/*   init_dongles.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yukurosa <yukurosa@student.42tokyo.jp>     #+#  +:+       +#+        */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-10-25 04:17:32 by yukurosa          #+#    #+#             */
-/*   Updated: 2026-10-25 04:17:32 by yukurosa         ###   ########.fr       */
+/*   Created: 2026/10/25 04:17:32 by yukurosa          #+#    #+#             */
+/*   Updated: 2026/10/30 11:03:26 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 int	init_dongles(t_simulation *sim)
 {
-	int i;
-	int n;
+	int	i;
+	int	n;
 
 	n = sim->config.number_of_coders;
 	sim->dongles = malloc(sizeof(t_dongle) * n);

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   simulation_state.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/30 11:00:20 by yukurosa          #+#    #+#             */
+/*   Updated: 2026/10/30 11:07:52 by yukurosa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "codexion.h"
 
 int	is_simulation_stopped(t_simulation *sim)
@@ -37,6 +49,7 @@ int	start_compiling(t_coder *coder)
 	pthread_mutex_unlock(&sim->state_mutex);
 	return (success);
 }
+
 void	finish_compiling(t_coder *coder)
 {
 	t_simulation	*sim;
@@ -49,8 +62,8 @@ void	finish_compiling(t_coder *coder)
 
 int	log_coder_action(t_coder *coder, const char *message)
 {
-	t_simulation *sim;
-	int success;
+	t_simulation	*sim;
+	int				success;
 
 	sim = coder->sim;
 	success = 0;

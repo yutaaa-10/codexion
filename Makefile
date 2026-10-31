@@ -6,6 +6,7 @@ CFLAGS = -Wall -Wextra -Werror -pthread
 CPPFLAGS = -I.
 
 SRCS = src/main.c \
+       src/parse/parser.c \
        src/init/init_coders.c \
        src/init/init_dongles.c \
        src/utils/destroy_simulation.c \
