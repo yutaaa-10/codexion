@@ -9,13 +9,23 @@ SRCS = src/main.c \
        src/parse/parser.c \
        src/init/init_coders.c \
        src/init/init_dongles.c \
+       src/init/init_dispatcher.c \
+       src/init/init_simulation.c \
        src/utils/destroy_simulation.c \
        src/simulation/run_simulation.c \
        src/simulation/coder_routine.c \
        src/utils/time_utils.c \
        src/simulation/dongle.c \
        src/simulation/simulation_state.c \
-       src/simulation/monitor_routine.c
+       src/simulation/monitor_routine.c \
+       src/simulation/start_barrier.c \
+       src/scheduler/heap.c \
+       src/scheduler/request.c \
+       src/scheduler/heap_remove.c \
+       src/scheduler/grant_checks.c \
+       src/scheduler/grant_request.c \
+       src/scheduler/wait_request.c \
+       src/scheduler/heap_utils.c
 
 
 OBJS = $(SRCS:.c=.o)

@@ -12,46 +12,27 @@
 
 #include "codexion.h"
 
+static int	print_error(const char *message)
+{
+	fprintf(stderr, "Error: %s\n", message);
+	return (1);
+}
+
 int	main(int argc, char **argv)
 {
 	t_simulation	sim;
+	int				status;
 
 	if (argc != 9)
-	{
-		fprintf(stderr, "Eroor: invalid number of arguments\n");
-		return (1);
-	}
+		return (print_error("invalid number of arguments"));
+	memset(&sim, 0, sizeof(t_simulation));
 	if (!parser_args(&sim.config, argv))
-	{
-		fprintf(stderr, "Eroor: invalid argments\n");
-		return (1);
-	}
-	sim.coders = NULL;
-	sim.dongles = NULL;
-	sim.start_time = 0;
-	sim.stopped = 0;
-	if (pthread_mutex_init(&sim.state_mutex, NULL) != 0)
-	{
-		fprintf(stderr, "Error: mutex initialization failed\n");
-		return (1);
-	}
-	if (!init_coders(&sim))
-	{
-		fprintf(stderr, "Error: faild to initialize coders\n");
-		return (1);
-	}
-	if (!init_dongles(&sim))
-	{
-		fprintf(stderr, "Error: faild to initalize dongles\n");
-		free(sim.coders);
-		return (1);
-	}
+		return (print_error("invalid arguments"));
+	if (!init_simulation(&sim))
+		return (print_error("initialization failed"));
+	status = 0;
 	if (!run_simulation(&sim))
-	{
-		fprintf(stderr, "Error: simulation faild\n");
-		destroy_simulation(&sim);
-		return (1);
-	}
+		status = print_error("simulation failed");
 	destroy_simulation(&sim);
-	return (0);
+	return (status);
 }

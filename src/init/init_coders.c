@@ -30,6 +30,11 @@ int	init_coders(t_simulation *sim)
 		sim->coders[i].last_compile_start = 0;
 		sim->coders[i].compile_count = 0;
 		sim->coders[i].sim = sim;
+		sim->coders[i].request.customer = &sim->coders[i];
+		sim->coders[i].request.arrival_order = 0;
+		sim->coders[i].request.deadline = 0;
+		sim->coders[i].request.granted = 0;
+		sim->coders[i].request.queued = 0;
 		i++;
 	}
 	return (1);

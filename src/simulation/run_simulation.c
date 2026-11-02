@@ -28,18 +28,6 @@ static int	join_threads(t_simulation *sim, int count)
 	return (status);
 }
 
-static void	init_start_times(t_simulation *sim)
-{
-	int	i;
-
-	i = 0;
-	while (i < sim->config.number_of_coders)
-	{
-		sim->coders[i].last_compile_start = sim->start_time;
-		i++;
-	}
-}
-
 static int	start_coder_threads(t_simulation *sim)
 {
 	int	i;
@@ -63,16 +51,19 @@ int	run_simulation(t_simulation *sim)
 {
 	int	status;
 
-	sim->start_time = get_time_ms();
-	if (sim->start_time == -1)
-		return (0);
-	init_start_times(sim);
 	if (!start_coder_threads(sim))
 		return (0);
 	if (pthread_create(&sim->monitor_thread, NULL, monitor_routine, sim) != 0)
 	{
 		stop_simulation(sim);
 		join_threads(sim, sim->config.number_of_coders);
+		return (0);
+	}
+	if (!open_start_barrier(sim))
+	{
+		stop_simulation(sim);
+		join_threads(sim, sim->config.number_of_coders);
+		pthread_join(sim->monitor_thread, NULL);
 		return (0);
 	}
 	status = join_threads(sim, sim->config.number_of_coders);

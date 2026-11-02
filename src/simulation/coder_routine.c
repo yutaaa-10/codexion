@@ -19,20 +19,10 @@ static int	has_finished(t_coder *coder)
 
 	sim = coder->sim;
 	pthread_mutex_lock(&sim->state_mutex);
-	finished = (coder->compile_count >= sim->config.number_of_compiles_required);
+	finished = (coder->compile_count
+			>= sim->config.number_of_compiles_required);
 	pthread_mutex_unlock(&sim->state_mutex);
 	return (finished);
-}
-
-static int	wait_for_dongles(t_coder *coder)
-{
-	while (!is_simulation_stopped(coder->sim))
-	{
-		if (try_acquire_dongles(coder))
-			return (1);
-		usleep(1000);
-	}
-	return (0);
 }
 
 static int	compile_code(t_coder *coder)
@@ -70,6 +60,8 @@ void	*coder_routine(void *data)
 	t_coder	*coder;
 
 	coder = (t_coder *)data;
+	if (!wait_for_simulation_start(coder->sim))
+		return (NULL);
 	while (!is_simulation_stopped(coder->sim))
 	{
 		if (has_finished(coder))

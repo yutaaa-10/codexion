@@ -45,14 +45,23 @@ void	*monitor_routine(void *arg)
 {
 	t_simulation	*sim;
 	long			now;
+	int				stopped;
 
 	sim = (t_simulation *)arg;
+	if (!wait_for_simulation_start(sim))
+		return (NULL);
 	while (!is_simulation_stopped(sim))
 	{
 		now = get_time_ms();
 		pthread_mutex_lock(&sim->state_mutex);
 		check_coders(sim, now);
+		stopped = sim->stopped;
 		pthread_mutex_unlock(&sim->state_mutex);
+		if (stopped)
+		{
+			wake_waiting_coders(sim);
+			break ;
+		}
 		usleep(1000);
 	}
 	return (NULL);

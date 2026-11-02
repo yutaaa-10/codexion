@@ -12,19 +12,27 @@
 
 #include "codexion.h"
 
+static void	destroy_dongles(t_simulation *sim)
+{
+	int	i;
+
+	if (!sim->dongles)
+		return ;
+	i = 0;
+	while (i < sim->config.number_of_coders)
+	{
+		pthread_mutex_destroy(&sim->dongles[i].mutex);
+		i++;
+	}
+	free(sim->dongles);
+	sim->dongles = NULL;
+}
+
 void	destroy_simulation(t_simulation *sim)
 {
-	int i;
-	i = 0;
-	if (sim->dongles)
-	{
-		while (i < sim->config.number_of_coders)
-		{
-			pthread_mutex_destroy(&sim->dongles[i].mutex);
-			i++;
-		}
-		free(sim->dongles);
-	}
+	destroy_dispatcher(&sim->dispatcher);
+	destroy_dongles(sim);
 	pthread_mutex_destroy(&sim->state_mutex);
 	free(sim->coders);
+	sim->coders = NULL;
 }

@@ -45,6 +45,7 @@ void	release_dongles(t_coder *coder)
 	second->in_use = 0;
 	pthread_mutex_unlock(&second->mutex);
 	pthread_mutex_unlock(&first->mutex);
+	grant_waiting_requests(coder->sim);
 }
 
 static int	reserve_dongles(t_dongle *first, t_dongle *second)
@@ -52,8 +53,8 @@ static int	reserve_dongles(t_dongle *first, t_dongle *second)
 	long	now;
 
 	now = get_time_ms();
-	if (now < 0 || first->in_use || second->in_use
-		|| now < first->available_at || now < second->available_at)
+	if (now < 0 || first->in_use || second->in_use || now < first->available_at
+		|| now < second->available_at)
 		return (0);
 	first->in_use = 1;
 	second->in_use = 1;

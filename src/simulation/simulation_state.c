@@ -27,6 +27,7 @@ void	stop_simulation(t_simulation *sim)
 	pthread_mutex_lock(&sim->state_mutex);
 	sim->stopped = 1;
 	pthread_mutex_unlock(&sim->state_mutex);
+	wake_waiting_coders(sim);
 }
 
 int	start_compiling(t_coder *coder)
@@ -53,11 +54,29 @@ int	start_compiling(t_coder *coder)
 void	finish_compiling(t_coder *coder)
 {
 	t_simulation	*sim;
+	int				completed;
+	int				i;
 
 	sim = coder->sim;
 	pthread_mutex_lock(&sim->state_mutex);
 	coder->compile_count++;
+	completed = 1;
+	i = 0;
+	while (i < sim->config.number_of_coders)
+	{
+		if (sim->coders[i].compile_count
+			< sim->config.number_of_compiles_required)
+		{
+			completed = 0;
+			break ;
+		}
+		i++;
+	}
+	if (completed)
+		sim->stopped = 1;
 	pthread_mutex_unlock(&sim->state_mutex);
+	if (completed)
+		wake_waiting_coders(sim);
 }
 
 int	log_coder_action(t_coder *coder, const char *message)
