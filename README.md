@@ -97,3 +97,56 @@ make fclean
 ```bash
 make re
 ```
+
+
+## 追加項目
+
+###　Blocking cases handled
+
+
+### Thread synchronization mechanisms
+
+## リソース
+
+### 参考資料
+
+本プロジェクトの実装にあたり、以下のドキュメントや記事を参考にしました。
+
+1. POSIX Threads（pthread）
+
+- [入門者向け！C言語でのマルチスレッドをわかりやすく解説](https://daeudaeu.com/multithread/)
+- [POSIXスレッド | C言語](https://segakuin.com/linux/library/pthread.html#google_vignette)
+
+2. Mutex・排他制御
+
+- [排他制御の基本：悲観ロックと楽観ロックを３分でわかりやすく](https://it-biz.online/it-skills/exclusion-control/)
+- [mutex（ミューテックス）とは？マルチスレッドの競合を防ぐ排他制御の基礎知識](https://cybersecurity-jp.com/column/99566)
+
+3. 並行処理・マルチスレッド
+
+- [並行処理はなぜ重要か？ 限りあるリソースの中でハイパフォーマンスを求められる現代の必須スキル](https://codezine.jp/article/detail/20436)
+- [3.1 スレッドの仕組みと操作（マルチスレッド、並行処理、並列処理、非同期呼び出し、スレッドセーフ、同期化、デッドロック、ウェイトセット、スレッドローカルなど）](https://qiita.com/KenyaSaitoh/items/8ff0a564ada70e3b5ee5)
+
+4. デッドロック
+
+- [デッドロックの仕組みを丁寧に解説 — 「お互いが待ち合う」とプログラムはなぜ止まるのか](https://qiita.com/gts/items/11a113cbb3eef893d9fe)
+
+5. スケジューリング（FIFO・EDF）
+
+- [プロセススケジューリング — OSの基本概念](https://stem.gpai.app/ja/topics/computer-science/process-scheduling/)
+
+### AIの活用
+
+本プロジェクトでは、主に以下の分野における学習や設計の補助としてAIを活用しました。
+
+* 並行処理と並列処理の違いの理解
+* POSIX Threads（pthread）によるスレッドの生成・終了管理の理解
+* Mutexを用いた排他制御と共有リソースの管理
+* データ競合やデッドロックの仕組みと防止方法の理解
+* FIFO・EDFなどのスケジューリング方式の理解
+* スレッド間の同期やバーンアウト監視の設計
+* エラーやバグの原因調査
+
+AIは、生成されたコードをそのままコピーするのではなく、主に並行処理の仕組みや関数の動作、コードの意味を確認し、理解を深めるために活用しました。
+
+また、READMEの構成の確認、課題要件と実装内容の照合、文章の校正・修正・翻訳にもAIを使用しました。
