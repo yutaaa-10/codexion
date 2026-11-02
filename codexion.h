@@ -6,7 +6,7 @@
 /*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/24 08:06:42 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/10/30 11:02:02 by yukurosa         ###   ########.fr       */
+/*   Updated: 2026/10/31 22:01:56 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ typedef struct s_dongle
 }							t_dongle;
 
 /* Forward declaration */
-
 typedef struct s_simulation	t_simulation;
 
 typedef struct s_coder

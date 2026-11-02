@@ -6,7 +6,7 @@
 /*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/30 11:00:32 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/10/30 11:05:50 by yukurosa         ###   ########.fr       */
+/*   Updated: 2026/10/31 22:10:08 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,7 @@ static int	has_finished(t_coder *coder)
 
 	sim = coder->sim;
 	pthread_mutex_lock(&sim->state_mutex);
-	finished = (coder->compile_count
-			>= sim->config.number_of_compiles_required);
+	finished = (coder->compile_count >= sim->config.number_of_compiles_required);
 	pthread_mutex_unlock(&sim->state_mutex);
 	return (finished);
 }
@@ -66,11 +65,11 @@ static int	debug_and_refactor(t_coder *coder)
 	return (1);
 }
 
-void	*coder_routine(void *arg)
+void	*coder_routine(void *data)
 {
 	t_coder	*coder;
 
-	coder = (t_coder *)arg;
+	coder = (t_coder *)data;
 	while (!is_simulation_stopped(coder->sim))
 	{
 		if (has_finished(coder))
