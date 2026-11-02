@@ -25,8 +25,7 @@ static int	find_candidate_index(t_simulation *sim, long now)
 	while (i < dispatcher->waiting.size)
 	{
 		candidate = dispatcher->waiting.items[i];
-		if (!request_has_higher_conflict(sim, candidate)
-			&& request_dongles_available(candidate, now) && (best == -1
+		if (request_dongles_available(candidate, now) && (best == -1
 				|| request_has_priority(candidate,
 					dispatcher->waiting.items[best], sim->config.scheduler)))
 			best = i;
