@@ -90,11 +90,13 @@ burnoutが発生した場合は、次のように表示されます。
 1241 1 burned out
 ```
 
-## Blocking cases handled
+## additional
+
+### Blocking cases handled
 
 この実装では、deadlock、starvation、cooldown違反、burnout検出の遅延、data race、ログの混在などの並行処理問題に対応しています。
 
-### Deadlock prevention
+#### Deadlock prevention
 
 coderはdongleを1個だけ保持したまま、もう1個を待つことはありません。schedulerは左右両方のdongleが利用可能な場合に限り、2個をまとめて予約します。片方でも利用できない場合は、どちらも予約しません。
 
@@ -109,7 +111,7 @@ Coffmanのdeadlock成立条件との対応は以下のとおりです。
 
 deadlockには4条件がすべて必要ですが、この実装ではhold-and-waitとcircular-waitを成立させないことでdeadlockを回避します。
 
-### Starvation prevention and scheduling
+#### Starvation prevention and scheduling
 
 待機requestは自作のbinary heapで管理します。FIFOではrequestの到着順を、EDFでは次のdeadlineを優先順位として使用します。
 
@@ -119,7 +121,7 @@ deadline = last_compile_start + time_to_burnout
 
 deadlineが同じ場合は、requestの到着順とcoder IDをtie-breakに使用します。schedulerは、現在左右両方のdongleを取得可能なrequestの中から最優先のものを選ぶため、dongleが重複しないcoderは並行してcompileできます。これにより、実行可能なパラメータでは特定のcoderが永久に待たされることを防ぎます。
 
-### Cooldown handling
+#### Cooldown handling
 
 dongleを解放するとき、次回利用可能時刻を記録します。
 
@@ -129,7 +131,7 @@ available_at = release_time + dongle_cooldown
 
 schedulerは、dongleが未使用で、現在時刻が`available_at`以上の場合にのみ予約します。`in_use`と`available_at`は各dongle専用のmutexで保護されるため、複数threadによる同時更新は発生しません。
 
-### Burnout, completion, and logging
+#### Burnout, completion, and logging
 
 burnoutはcoderとは別のmonitor threadが約1ms間隔で監視します。時刻には`CLOCK_MONOTONIC`を使用し、次の条件を満たしたcoderをburnoutとして記録します。
 
@@ -145,11 +147,11 @@ burnoutを検出すると`stopped`を設定し、condition variableで待機中�
 
 coderが1人の場合は、1個のdongleだけを取得し、2個目を取得できないままdeadlineでburnoutする専用処理を行います。
 
-## Thread synchronization mechanisms
+### Thread synchronization mechanisms
 
 この実装では、`pthread_mutex_t`と`pthread_cond_t`を使ってcoder、scheduler、dongle、monitor間を同期します。独自のevent型は実装せず、condition variableと`started`、`granted`、`stopped`などの共有状態を組み合わせてevent相当の処理を実現しています。
 
-### Mutexes
+#### Mutexes
 
 - `state_mutex`: `stopped`、`last_compile_start`、`compile_count`、開始時刻、ログ出力を保護する
 - 各dongleの`mutex`: `in_use`と`available_at`を保護する
@@ -159,7 +161,7 @@ coderが1人の場合は、1個のdongleだけを取得し、2個目を取得で
 
 左右のdongleを予約するときは、両方のdongle mutexを番号順にlockし、利用状態とcooldownを確認してから、同じcritical section内で両方を`in_use`に変更します。確認と予約が分離されていないため、複数のcoderが同じdongleを同時取得することはありません。
 
-### Condition variable
+#### Condition variable
 
 `dispatcher.cond`は以下の用途で使用します。
 
@@ -171,7 +173,7 @@ coderが1人の場合は、1個のdongleだけを取得し、2個目を取得で
 
 coderはdongleを取得できない場合、busy loopを続けるのではなく`pthread_cond_timedwait()`で待機します。起床後は必ず`granted`と`stopped`を再確認するため、spurious wakeupにも対応できます。
 
-### Thread-safe communication
+#### Thread-safe communication
 
 coderがrequestを登録するときは、`dispatcher.mutex`を保持してheapへの追加と到着順の割り当てを行います。schedulerがrequestを許可するときも同じmutexを保持し、次の状態変更を行います。
 
