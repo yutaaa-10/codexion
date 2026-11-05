@@ -15,7 +15,12 @@
 int	request_has_priority(t_request *first, t_request *second,
 		t_scheduler policy)
 {
-	if (policy == EDF && first->deadline != second->deadline)
+	if (policy == FIFO)
+	{
+		if (first->arrival_order != second->arrival_order)
+			return (first->arrival_order < second->arrival_order);
+	}
+	else if (first->deadline != second->deadline)
 		return (first->deadline < second->deadline);
 	if (first->arrival_order != second->arrival_order)
 		return (first->arrival_order < second->arrival_order);
