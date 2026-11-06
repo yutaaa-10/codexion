@@ -125,9 +125,8 @@ int							start_compiling(t_coder *coder);
 void						finish_compiling(t_coder *coder);
 
 /* Dongles */
-int							try_acquire_dongle(t_dongle *dongle);
-void						release_dongle(t_dongle *dongle, long cooldown);
-int							try_acquire_dongles(t_coder *coder);
+void						get_ordered_dongles(t_coder *coder,
+								t_dongle **first, t_dongle **second);
 void						release_dongles(t_coder *coder);
 
 /* Scheduler heap */
@@ -135,8 +134,6 @@ int							heap_init(t_heap *heap, int capacity);
 void						heap_destroy(t_heap *heap);
 int							heap_push(t_heap *heap, t_request *request,
 								t_scheduler policy);
-t_request					*heap_peek(t_heap *heap);
-t_request					*heap_pop(t_heap *heap, t_scheduler policy);
 int							request_has_priority(t_request *first,
 								t_request *second, t_scheduler policy);
 int							submit_request(t_coder *coder);
@@ -149,8 +146,6 @@ int							log_coder_action(t_coder *coder,
 /* Scheduler grants */
 t_request					*heap_remove_at(t_heap *heap, int index,
 								t_scheduler policy);
-int							request_has_higher_conflict(t_simulation *sim,
-								t_request *candidate);
 int							request_dongles_available(t_request *request,
 								long now);
 int							reserve_request_dongles(t_request *request,

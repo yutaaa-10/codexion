@@ -12,6 +12,47 @@
 
 #include "codexion.h"
 
+int	request_dongles_available(t_request *request, long now)
+{
+	t_dongle	*first;
+	t_dongle	*second;
+	int			available;
+
+	get_ordered_dongles(request->customer, &first, &second);
+	if (first == second)
+		return (0);
+	pthread_mutex_lock(&first->mutex);
+	pthread_mutex_lock(&second->mutex);
+	available = (!first->in_use && !second->in_use && now >= first->available_at
+			&& now >= second->available_at);
+	pthread_mutex_unlock(&second->mutex);
+	pthread_mutex_unlock(&first->mutex);
+	return (available);
+}
+
+int	reserve_request_dongles(t_request *request, long now)
+{
+	t_dongle	*first;
+	t_dongle	*second;
+	int			success;
+
+	get_ordered_dongles(request->customer, &first, &second);
+	if (first == second)
+		return (0);
+	pthread_mutex_lock(&first->mutex);
+	pthread_mutex_lock(&second->mutex);
+	success = (!first->in_use && !second->in_use && now >= first->available_at
+			&& now >= second->available_at);
+	if (success)
+	{
+		first->in_use = 1;
+		second->in_use = 1;
+	}
+	pthread_mutex_unlock(&second->mutex);
+	pthread_mutex_unlock(&first->mutex);
+	return (success);
+}
+
 static int	find_candidate_index(t_simulation *sim, long now)
 {
 	t_dispatcher	*dispatcher;

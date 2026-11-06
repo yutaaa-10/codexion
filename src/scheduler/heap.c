@@ -28,10 +28,10 @@ static void	sift_up(t_heap *heap, int index, t_scheduler policy)
 	while (index > 0)
 	{
 		parent = (index - 1) / 2;
-		if (request_has_priority(heap->items[parent], heap->items[index],
+		if (!request_has_priority(heap->items[index], heap->items[parent],
 				policy))
 			break ;
-		swap_requests(&heap->items[parent], &heap->items[index]);
+		swap_requests(&heap->items[index], &heap->items[parent]);
 		index = parent;
 	}
 }
@@ -42,17 +42,16 @@ static void	sift_down(t_heap *heap, int index, t_scheduler policy)
 	int	right;
 	int	best;
 
-	while (1)
+	while (index * 2 + 1 < heap->size)
 	{
 		left = index * 2 + 1;
-		if (left >= heap->size)
-			break ;
 		right = left + 1;
 		best = left;
 		if (right < heap->size && request_has_priority(heap->items[right],
 				heap->items[left], policy))
 			best = right;
-		if (request_has_priority(heap->items[index], heap->items[best], policy))
+		if (!request_has_priority(heap->items[best], heap->items[index],
+				policy))
 			break ;
 		swap_requests(&heap->items[index], &heap->items[best]);
 		index = best;
@@ -74,19 +73,25 @@ int	heap_push(t_heap *heap, t_request *request, t_scheduler policy)
 	return (1);
 }
 
-t_request	*heap_pop(t_heap *heap, t_scheduler policy)
+t_request	*heap_remove_at(t_heap *heap, int index, t_scheduler policy)
 {
-	t_request	*result;
+	t_request	*removed;
+	int			parent;
 
-	if (!heap || !heap->items || heap->size == 0)
+	if (!heap || index < 0 || index >= heap->size)
 		return (NULL);
-	result = heap->items[0];
+	removed = heap->items[index];
 	heap->size--;
-	if (heap->size > 0)
+	if (index < heap->size)
 	{
-		heap->items[0] = heap->items[heap->size];
-		sift_down(heap, 0, policy);
+		heap->items[index] = heap->items[heap->size];
+		parent = (index - 1) / 2;
+		if (index > 0 && request_has_priority(heap->items[index],
+				heap->items[parent], policy))
+			sift_up(heap, index, policy);
+		else
+			sift_down(heap, index, policy);
 	}
 	heap->items[heap->size] = NULL;
-	return (result);
+	return (removed);
 }

@@ -25,7 +25,6 @@ int	main(int argc, char **argv)
 
 	if (argc != 9)
 		return (print_error("invalid number of arguments"));
-	memset(&sim, 0, sizeof(t_simulation));
 	if (!parser_args(&sim.config, argv))
 		return (print_error("invalid arguments"));
 	if (!init_simulation(&sim))

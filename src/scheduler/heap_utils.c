@@ -50,10 +50,3 @@ void	heap_destroy(t_heap *heap)
 	heap->size = 0;
 	heap->capacity = 0;
 }
-
-t_request	*heap_peek(t_heap *heap)
-{
-	if (!heap || !heap->items || heap->size == 0)
-		return (NULL);
-	return (heap->items[0]);
-}

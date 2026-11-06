@@ -21,8 +21,6 @@ SRCS = src/main.c \
        src/simulation/start_barrier.c \
        src/scheduler/heap.c \
        src/scheduler/request.c \
-       src/scheduler/heap_remove.c \
-       src/scheduler/grant_checks.c \
        src/scheduler/grant_request.c \
        src/scheduler/wait_request.c \
        src/scheduler/heap_utils.c
