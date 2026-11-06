@@ -104,14 +104,10 @@ int							ft_atol(const char *str, long *result);
 int							parser_args(t_config *config, char **argv);
 
 /* Initialization */
-int							init_coders(t_simulation *sim);
-int							init_dongles(t_simulation *sim);
-int							init_dispatcher(t_simulation *sim);
 int							init_simulation(t_simulation *sim);
 
 /* Destruction */
 void						destroy_simulation(t_simulation *sim);
-void						destroy_dispatcher(t_dispatcher *dispatcher);
 
 /* Simulation */
 int							run_simulation(t_simulation *sim);

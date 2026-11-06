@@ -7,9 +7,6 @@ CPPFLAGS = -I.
 
 SRCS = src/main.c \
        src/parse/parser.c \
-       src/init/init_coders.c \
-       src/init/init_dongles.c \
-       src/init/init_dispatcher.c \
        src/init/init_simulation.c \
        src/utils/destroy_simulation.c \
        src/simulation/run_simulation.c \

@@ -12,6 +12,16 @@
 
 #include "codexion.h"
 
+static void	destroy_dispatcher(t_dispatcher *dispatcher)
+{
+	if (!dispatcher || !dispatcher->initialized)
+		return ;
+	pthread_cond_destroy(&dispatcher->cond);
+	pthread_mutex_destroy(&dispatcher->mutex);
+	heap_destroy(&dispatcher->waiting);
+	dispatcher->initialized = 0;
+}
+
 static void	destroy_dongles(t_simulation *sim)
 {
 	int	i;
