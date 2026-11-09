@@ -6,7 +6,7 @@
 /*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/24 08:06:38 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/10/31 12:18:04 by yukurosa         ###   ########.fr       */
+/*   Updated: 2026/11/06 12:23:35 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ static int	print_error(const char *message)
 int	main(int argc, char **argv)
 {
 	t_simulation	sim;
-	int				status;
 
 	if (argc != 9)
 		return (print_error("invalid number of arguments"));
@@ -29,9 +28,11 @@ int	main(int argc, char **argv)
 		return (print_error("invalid arguments"));
 	if (!init_simulation(&sim))
 		return (print_error("initialization failed"));
-	status = 0;
 	if (!run_simulation(&sim))
-		status = print_error("simulation failed");
+	{
+		destroy_simulation(&sim);
+		return (print_error("simulation failed"));
+	}
 	destroy_simulation(&sim);
-	return (status);
+	return (0);
 }

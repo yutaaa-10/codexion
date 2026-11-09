@@ -6,7 +6,7 @@
 /*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/30 11:00:54 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/10/30 11:00:57 by yukurosa         ###   ########.fr       */
+/*   Updated: 2026/11/06 12:23:18 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,6 @@ static int	start_coder_threads(t_simulation *sim)
 
 int	run_simulation(t_simulation *sim)
 {
-	int	status;
-
 	if (!start_coder_threads(sim))
 		return (0);
 	if (pthread_create(&sim->monitor_thread, NULL, monitor_routine, sim) != 0)
@@ -66,8 +64,12 @@ int	run_simulation(t_simulation *sim)
 		pthread_join(sim->monitor_thread, NULL);
 		return (0);
 	}
-	status = join_threads(sim, sim->config.number_of_coders);
+	if (!join_threads(sim, sim->config.number_of_coders))
+	{
+		pthread_join(sim->monitor_thread, NULL);
+		return (0);
+	}
 	if (pthread_join(sim->monitor_thread, NULL) != 0)
-		status = 0;
-	return (status);
+		return (0);
+	return (1);
 }
