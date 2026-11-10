@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heap.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yukurosa <yukurosa@student.42tokyo.jp>     #+#  +:+       +#+        */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-11-02 05:05:20 by yukurosa          #+#    #+#             */
-/*   Updated: 2026-11-02 05:05:20 by yukurosa         ###   ########.fr       */
+/*   Created: 2026/11/02 05:05:20 by yukurosa          #+#    #+#             */
+/*   Updated: 2026/11/09 21:38:40 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ static void	swap_requests(t_request **first, t_request **second)
 
 static void	sift_up(t_heap *heap, int index, t_scheduler policy)
 {
-	int	parent;
+	int			parent;
+	t_request	*temporary;
 
 	while (index > 0)
 	{
@@ -32,6 +33,9 @@ static void	sift_up(t_heap *heap, int index, t_scheduler policy)
 				policy))
 			break ;
 		swap_requests(&heap->items[index], &heap->items[parent]);
+		temporary = &heap->items[index];
+		heap->items[index] = &heap->items[parent];
+		heap->items[parent] = temporary;
 		index = parent;
 	}
 }

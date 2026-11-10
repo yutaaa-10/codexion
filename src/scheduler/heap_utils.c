@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heap_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yukurosa <yukurosa@student.42tokyo.jp>     #+#  +:+       +#+        */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-11-02 04:53:29 by yukurosa          #+#    #+#             */
-/*   Updated: 2026-11-02 04:53:29 by yukurosa         ###   ########.fr       */
+/*   Created: 2026/11/02 04:53:29 by yukurosa          #+#    #+#             */
+/*   Updated: 2026/11/09 21:51:47 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,13 @@ int	request_has_priority(t_request *first, t_request *second,
 		if (first->arrival_order != second->arrival_order)
 			return (first->arrival_order < second->arrival_order);
 	}
-	else if (first->deadline != second->deadline)
-		return (first->deadline < second->deadline);
-	if (first->arrival_order != second->arrival_order)
-		return (first->arrival_order < second->arrival_order);
+	else if (policy == EDF)
+	{
+		if (first->deadline != second->deadline)
+			return (first->deadline < second->deadline);
+		if (first->arrival_order != second->arrival_order)
+			return (first->arrival_order < second->arrival_order);
+	}
 	return (first->customer->id < second->customer->id);
 }
 

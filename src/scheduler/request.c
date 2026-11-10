@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yukurosa <yukurosa@student.42tokyo.jp>     #+#  +:+       +#+        */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-11-02 05:24:21 by yukurosa          #+#    #+#             */
-/*   Updated: 2026-11-02 05:24:21 by yukurosa         ###   ########.fr       */
+/*   Created: 2026/11/02 05:24:21 by yukurosa          #+#    #+#             */
+/*   Updated: 2026/11/09 20:06:41 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,6 @@ int	submit_request(t_coder *coder)
 	success = 0;
 	if (!coder->request.queued)
 		success = push_request(coder, deadline);
-	if (success)
-		pthread_cond_broadcast(&dispatcher->cond);
 	pthread_mutex_unlock(&dispatcher->mutex);
 	return (success);
 }
