@@ -23,8 +23,7 @@ static void	swap_requests(t_request **first, t_request **second)
 
 static void	sift_up(t_heap *heap, int index, t_scheduler policy)
 {
-	int			parent;
-	t_request	*temporary;
+	int	parent;
 
 	while (index > 0)
 	{
@@ -33,9 +32,6 @@ static void	sift_up(t_heap *heap, int index, t_scheduler policy)
 				policy))
 			break ;
 		swap_requests(&heap->items[index], &heap->items[parent]);
-		temporary = &heap->items[index];
-		heap->items[index] = &heap->items[parent];
-		heap->items[parent] = temporary;
 		index = parent;
 	}
 }
