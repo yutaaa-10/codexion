@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   simulation_state.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/10/30 11:00:20 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/10/30 11:07:52 by yukurosa         ###   ########.fr       */
+/*   Created: 2026-11-11 05:24:42 by yukurosa          #+#    #+#             */
+/*   Updated: 2026-11-11 05:24:42 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

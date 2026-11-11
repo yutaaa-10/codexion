@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   time_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/10/30 11:01:10 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/11/06 12:33:01 by yukurosa         ###   ########.fr       */
+/*   Created: 2026-11-11 05:25:01 by yukurosa          #+#    #+#             */
+/*   Updated: 2026-11-11 05:25:01 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

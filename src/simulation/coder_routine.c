@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   coder_routine.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/10/30 11:00:32 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/10/31 22:10:08 by yukurosa         ###   ########.fr       */
+/*   Created: 2026-11-11 05:24:16 by yukurosa          #+#    #+#             */
+/*   Updated: 2026-11-11 05:24:16 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

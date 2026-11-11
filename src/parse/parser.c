@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/10/30 10:39:39 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/10/30 11:04:20 by yukurosa         ###   ########.fr       */
+/*   Created: 2026-11-11 05:23:25 by yukurosa          #+#    #+#             */
+/*   Updated: 2026-11-11 05:23:25 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

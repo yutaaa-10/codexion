@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   destroy_simulation.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/10/30 11:01:03 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/10/31 12:18:26 by yukurosa         ###   ########.fr       */
+/*   Created: 2026-11-11 05:24:55 by yukurosa          #+#    #+#             */
+/*   Updated: 2026-11-11 05:24:55 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

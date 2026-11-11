@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   dongle.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/10/29 17:23:51 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/10/30 11:06:54 by yukurosa         ###   ########.fr       */
+/*   Created: 2026-11-11 05:24:22 by yukurosa          #+#    #+#             */
+/*   Updated: 2026-11-11 05:24:22 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-void	get_ordered_dongles(t_coder *coder, t_dongle **first,
-		t_dongle **second)
+void	get_ordered_dongles(t_coder *coder, t_dongle **first, t_dongle **second)
 {
 	*first = &coder->sim->dongles[coder->left_dongle];
 	*second = &coder->sim->dongles[coder->right_dongle];

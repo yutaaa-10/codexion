@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   request.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/11/02 05:24:21 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/11/09 20:06:41 by yukurosa         ###   ########.fr       */
+/*   Created: 2026-11-11 05:24:00 by yukurosa          #+#    #+#             */
+/*   Updated: 2026-11-11 05:24:00 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

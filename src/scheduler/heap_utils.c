@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heap_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/11/02 04:53:29 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/11/09 21:51:47 by yukurosa         ###   ########.fr       */
+/*   Created: 2026-11-11 05:23:39 by yukurosa          #+#    #+#             */
+/*   Updated: 2026-11-11 05:23:39 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

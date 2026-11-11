@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_simulation.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yukurosa <yukurosa@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: yukurosa <yukurosa@student.42tokyo.jp>     #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/10/30 11:00:54 by yukurosa          #+#    #+#             */
-/*   Updated: 2026/11/06 12:23:18 by yukurosa         ###   ########.fr       */
+/*   Created: 2026-11-11 05:24:35 by yukurosa          #+#    #+#             */
+/*   Updated: 2026-11-11 05:24:35 by yukurosa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
