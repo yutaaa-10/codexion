@@ -2,34 +2,43 @@
 
 # Codexion
 
-## 概要 (Description)
+## Description
 
-Codexionは、C言語とPOSIX Threadsを使用して、複数のcoderが限られたUSB dongleを共有する状況を再現する並行処理シミュレーションです。
+Codexion is a concurrency simulation written in C with POSIX threads. It models
+multiple coders sharing a limited number of USB dongles.
 
-各coderは独立したthreadとして動作し、dongleを2個取得してcompileした後、debugとrefactorを行います。dongleには解放後のcooldownがあり、すぐに再利用することはできません。また、coderが一定時間内に次のcompileを開始できなかった場合はburnoutします。
+Each coder runs in a separate thread. To compile, a coder must acquire both the
+left and right dongles. After compiling, the coder releases both dongles, then
+debugs and refactors. A released dongle remains unavailable until its cooldown
+has elapsed. A coder burns out if they do not start compiling again before their
+deadline.
 
-複数のcoderが同じdongleを要求した場合は、次のいずれかのschedulerで利用順を決定します。
+When multiple coders compete for dongles, one of two scheduling policies decides
+which request has priority:
 
-- `fifo`: requestが到着した順に処理するFirst In, First Out
-- `edf`: burnoutのdeadlineが早いcoderを優先するEarliest Deadline First
+- `fifo`: First In, First Out; requests are served in arrival order.
+- `edf`: Earliest Deadline First; the coder with the earliest burnout deadline
+  has priority.
 
-待機requestは自作のbinary heapによるpriority queueで管理します。simulationは、いずれかのcoderがburnoutした場合、または全coderが必要回数のcompileを完了した場合に終了します。
+Waiting requests are stored in a custom binary-heap priority queue. The
+simulation stops when a coder burns out or when every coder has completed the
+required number of compilations.
 
-このプロジェクトの目的は、thread、mutex、condition variable、priority queueを使い、deadlock、starvation、data raceなどの並行処理問題を安全に扱うことです。
+The goal of the project is to coordinate threads and shared resources safely
+with mutexes, condition variables, precise timing, and fair scheduling while
+preventing deadlocks, starvation, data races, and interleaved logs.
 
-## 手順 (Instructions)
+## Instructions
 
-### コンパイル
+### Compilation
 
-プロジェクトルートで以下を実行します。
+Run the following command from the project root:
 
 ```sh
 make
 ```
 
-コンパイルに成功すると、実行ファイル`codexion`が生成されます。
-
-利用可能なMakefileルールは以下のとおりです。
+This creates the codexion executable. The available Makefile rules are:
 
 ```sh
 make all
@@ -38,14 +47,14 @@ make fclean
 make re
 ```
 
-- `all`: プログラムをビルドする
-- `clean`: object fileを削除する
-- `fclean`: object fileと実行ファイルを削除する
-- `re`: すべて削除して再ビルドする
+- `all`: builds the program.
+- `clean`: removes object files.
+- `fclean`: removes object files and the executable.
+- `re`: performs a clean rebuild.
 
-### 実行方法
+### Execution
 
-プログラムは8個の必須引数を受け取ります。
+The program takes eight mandatory arguments:
 
 ```sh
 ./codexion <number_of_coders> <time_to_burnout> <time_to_compile> \
@@ -53,28 +62,32 @@ make re
 	<dongle_cooldown> <scheduler>
 ```
 
-| 引数 | 説明 |
+| Argument | Description |
 |---|---|
-| `number_of_coders` | coder数とdongle数 |
-| `time_to_burnout` | 最後のcompile開始からburnoutするまでの時間（ms） |
-| `time_to_compile` | compileに必要な時間（ms） |
-| `time_to_debug` | debugに必要な時間（ms） |
-| `time_to_refactor` | refactorに必要な時間（ms） |
-| `number_of_compiles_required` | 各coderが完了する必要があるcompile回数 |
-| `dongle_cooldown` | dongle解放後、再利用できるまでの時間（ms） |
-| `scheduler` | スケジューリング方式（`fifo`または`edf`） |
+| `number_of_coders` | Number of coders and dongles |
+| `time_to_burnout` | Time from the last compile start until burnout, in milliseconds |
+| `time_to_compile` | Compile duration, in milliseconds |
+| `time_to_debug` | Debug duration, in milliseconds |
+| `time_to_refactor` | Refactor duration, in milliseconds |
+| `number_of_compiles_required` | Number of compilations each coder must complete |
+| `dongle_cooldown` | Time before a released dongle can be reused, in milliseconds |
+| `scheduler` | Scheduling policy: `fifo` or `edf` |
 
-負数、整数以外の値、範囲外の値、不正なschedulerはエラーとして拒否されます。
+Negative values, non-integer values, out-of-range values, and unsupported
+scheduler names are rejected.
 
-### 実行例
+### Example
 
 ```sh
 ./codexion 5 3500 200 200 200 10 800 edf
 ```
 
-この例では、5人のcoderがそれぞれ10回のcompile完了を目指します。compile、debug、refactorにはそれぞれ200msかかり、dongleのcooldownは800msです。schedulerにはEDFを使用します。
+In this example, five coders must each complete ten compilations. Compiling,
+debugging, and refactoring each take 200 ms, dongle cooldown is 800 ms, and EDF
+is used for scheduling.
 
-実行中は、simulation開始からの経過時間、coder ID、現在の状態が表示されます。
+The log contains the elapsed time since simulation start, the coder ID, and the
+new state:
 
 ```text
 0 1 has taken a dongle
@@ -84,138 +97,184 @@ make re
 400 1 is refactoring
 ```
 
-burnoutが発生した場合は、次のように表示されます。
+A burnout is logged as follows:
 
 ```text
 1241 1 burned out
 ```
 
-## additional
+## Blocking cases handled
 
-### Blocking cases handled
+This implementation addresses deadlocks, starvation, cooldown violations,
+delayed burnout detection, data races, and interleaved log output.
 
-この実装では、deadlock、starvation、cooldown違反、burnout検出の遅延、data race、ログの混在などの並行処理問題に対応しています。
+### Deadlock prevention
 
-#### Deadlock prevention
+A coder never holds one dongle while waiting for the other. The scheduler
+reserves both required dongles atomically only when both are available; if
+either is unavailable, neither is reserved.
 
-coderはdongleを1個だけ保持したまま、もう1個を待つことはありません。schedulerは左右両方のdongleが利用可能な場合に限り、2個をまとめて予約します。片方でも利用できない場合は、どちらも予約しません。
+Whenever two dongle mutexes are needed, they are locked in ascending dongle
+index order. Every thread therefore follows the same lock order, preventing a
+circular wait caused by opposite lock acquisition orders.
 
-また、2個のdongle mutexを操作するときは、必ずdongle番号の小さい方からlockします。すべてのthreadが同じ順番でmutexを取得することで、逆順のmutex取得による循環待ちを防止します。
+The implementation handles Coffman's four deadlock conditions as follows:
 
-Coffmanのdeadlock成立条件との対応は以下のとおりです。
+- **Mutual exclusion:** retained because one dongle cannot be used by multiple
+  coders simultaneously.
+- **Hold and wait:** prevented by reserving both dongles together instead of
+  holding one while waiting for another.
+- **No preemption:** retained because a compiling coder releases its dongles
+  when compilation ends.
+- **Circular wait:** prevented by always locking dongle mutexes in index order.
 
-- Mutual exclusion: 1個のdongleを複数のcoderが同時使用しないために維持される
-- Hold and wait: 1個だけ保持して待機せず、左右両方をまとめて予約することで防止する
-- No preemption: compile中のdongleは使用中のcoderが終了時に解放する
-- Circular wait: dongle mutexを常に番号順で取得することで防止する
+All four conditions are required for deadlock. Breaking hold-and-wait and
+circular-wait prevents a deadlock from forming.
 
-deadlockには4条件がすべて必要ですが、この実装ではhold-and-waitとcircular-waitを成立させないことでdeadlockを回避します。
+### Starvation prevention and scheduling
 
-#### Starvation prevention and scheduling
-
-待機requestは自作のbinary heapで管理します。FIFOではrequestの到着順を、EDFでは次のdeadlineを優先順位として使用します。
+Waiting requests are managed by a custom binary heap. FIFO uses request arrival
+order as its priority. EDF uses the next burnout deadline:
 
 ```text
 deadline = last_compile_start + time_to_burnout
 ```
 
-deadlineが同じ場合は、requestの到着順とcoder IDをtie-breakに使用します。schedulerは、現在左右両方のdongleを取得可能なrequestの中から最優先のものを選ぶため、dongleが重複しないcoderは並行してcompileできます。これにより、実行可能なパラメータでは特定のcoderが永久に待たされることを防ぎます。
+Equal EDF deadlines are resolved by arrival order and then coder ID, making the
+policy deterministic. The scheduler selects the highest-priority request among
+those whose two dongles are currently available. Coders that use non-overlapping
+dongles may therefore compile concurrently.
 
-#### Cooldown handling
+FIFO prevents an older conflicting request from being repeatedly overtaken by
+newer ones. Under EDF, the request with the most urgent burnout deadline is
+served first. This provides the required liveness for EDF when the supplied
+timings make the workload feasible.
 
-dongleを解放するとき、次回利用可能時刻を記録します。
+### Cooldown handling
+
+When dongles are released, their next usable time is recorded:
 
 ```text
 available_at = release_time + dongle_cooldown
 ```
 
-schedulerは、dongleが未使用で、現在時刻が`available_at`以上の場合にのみ予約します。`in_use`と`available_at`は各dongle専用のmutexで保護されるため、複数threadによる同時更新は発生しません。
+The scheduler reserves a dongle only when it is not in use and the current time
+is at least available_at. Each dongle's in_use and available_at fields are
+protected by that dongle's mutex, preventing simultaneous or premature use.
 
-#### Burnout, completion, and logging
+### Precise burnout, completion, and logging
 
-burnoutはcoderとは別のmonitor threadが約1ms間隔で監視します。時刻には`CLOCK_MONOTONIC`を使用し、次の条件を満たしたcoderをburnoutとして記録します。
+A dedicated monitor thread checks coders approximately every millisecond.
+Timing uses CLOCK_MONOTONIC, and a coder burns out when:
 
 ```text
 current_time - last_compile_start >= time_to_burnout
 ```
 
-burnoutを検出すると`stopped`を設定し、condition variableで待機中のcoderをすべて起こします。全coderが必要回数のcompileを完了した場合も、その場でsimulationを停止します。
+On burnout, the monitor sets the shared stop state and wakes every coder waiting
+on the condition variable. The simulation also stops as soon as every coder has
+completed the required number of compilations.
 
-状態ログとburnoutログは`state_mutex`で直列化されるため、複数threadのメッセージが同じ行で混ざることはありません。停止後の通常ログも`stopped`の確認によって抑制されます。
+Normal state logs and burnout logs are serialized with state_mutex, so two
+messages cannot interleave on one line. The same critical section checks the stop
+state, suppressing normal log messages after the simulation has stopped.
 
-すべてのcoder threadとmonitor threadはstart barrierで待機し、共通の`start_time`が設定された後に一斉に開始します。これにより、threadの作成順によるdeadlineの不公平を防止します。
+All coder threads and the monitor thread wait at a start barrier. Once every
+thread has been created, a common start_time is set and all threads are
+released. This prevents thread creation order from giving some coders an unfair
+deadline.
 
-coderが1人の場合は、1個のdongleだけを取得し、2個目を取得できないままdeadlineでburnoutする専用処理を行います。
+With one coder, only one dongle exists. The coder takes that dongle, waits without
+compiling, and eventually burns out at the deadline, as required.
 
-### Thread synchronization mechanisms
+## Thread synchronization mechanisms
 
-この実装では、`pthread_mutex_t`と`pthread_cond_t`を使ってcoder、scheduler、dongle、monitor間を同期します。独自のevent型は実装せず、condition variableと`started`、`granted`、`stopped`などの共有状態を組み合わせてevent相当の処理を実現しています。
+The implementation uses pthread_mutex_t and pthread_cond_t to coordinate
+coders, the scheduler, dongles, logging, and the monitor. It does not define a
+separate custom event type; condition variables combined with the shared
+`started, granted, and stopped states provide event-like communication.
 
-#### Mutexes
+### Mutexes
 
-- `state_mutex`: `stopped`、`last_compile_start`、`compile_count`、開始時刻、ログ出力を保護する
-- 各dongleの`mutex`: `in_use`と`available_at`を保護する
-- `dispatcher.mutex`: 待機heap、requestの到着順、`queued`、`granted`、start barrierの`started`を保護する
+- state_mutex protects stopped, last_compile_start, compile_count, the
+  common start time, and serialized log output.
+- Each dongle's mutex protects its in_use and available_at fields.
+- dispatcher.mutex protects the waiting heap, request arrival order,
+  queued, granted, and the start barrier's started state.
 
-例えば、coderがcompileを開始するときは`state_mutex`を保持して`last_compile_start`を更新します。monitorも同じmutexを保持してこの値を読み取るため、更新とburnout判定のdata raceを防げます。
+For example, a coder updates last_compile_start while holding state_mutex.
+The monitor acquires the same mutex before reading it, preventing a data race
+between a compile start and burnout detection.
 
-左右のdongleを予約するときは、両方のdongle mutexを番号順にlockし、利用状態とcooldownを確認してから、同じcritical section内で両方を`in_use`に変更します。確認と予約が分離されていないため、複数のcoderが同じdongleを同時取得することはありません。
+To reserve two dongles, the scheduler locks both dongle mutexes in index order,
+checks their usage and cooldown state, and marks both as in use within the same
+critical section. Because checking and reservation are atomic with respect to
+other coders, two coders cannot acquire the same dongle.
 
-#### Condition variable
+### Condition variable
 
-`dispatcher.cond`は以下の用途で使用します。
+dispatcher.cond is used for:
 
-- 全threadの同時スタート
-- dongle待機中coderのsleep
-- dongle解放後の再評価
-- requestが許可されたcoderの起床
-- simulation停止時の全thread起床
+- releasing all threads from the start barrier;
+- sleeping while a coder waits for dongles;
+- re-evaluating requests after resource state changes;
+- waking coders whose requests have been granted; and
+- waking all waiting coders when the simulation stops.
 
-coderはdongleを取得できない場合、busy loopを続けるのではなく`pthread_cond_timedwait()`で待機します。起床後は必ず`granted`と`stopped`を再確認するため、spurious wakeupにも対応できます。
+When dongles are unavailable, a coder uses pthread_cond_timedwait() instead of
+busy-waiting. After waking, the coder always checks granted and stopped again,
+which also handles spurious wakeups. The timeout ensures cooldown expiration is
+re-evaluated even if no thread sends a notification at that exact moment.
 
-#### Thread-safe communication
+### Thread-safe communication
 
-coderがrequestを登録するときは、`dispatcher.mutex`を保持してheapへの追加と到着順の割り当てを行います。schedulerがrequestを許可するときも同じmutexを保持し、次の状態変更を行います。
+A coder holds dispatcher.mutex while assigning an arrival order and inserting
+its request into the heap. The scheduler holds the same mutex while granting a
+request and performs the following state transition:
 
 ```text
-heapからrequestを削除
+remove request from heap
 queued = 0
 granted = 1
-condition variableをbroadcast
+broadcast the condition variable
 ```
 
-待機中のcoderはdispatcher mutexを再取得してから`granted`を確認するため、schedulerによる更新を安全に読み取れます。
+A waiting coder reacquires dispatcher.mutex before checking granted, so it
+observes the scheduler's update safely.
 
-monitorがburnoutを検出した場合は、`state_mutex`内で`stopped`を設定します。その後、state mutexをunlockしてからcondition variableをbroadcastします。異なるmutexを必要以上に同時保持しないことで、mutex取得順序の逆転によるdeadlockを避けています。
+When the monitor detects burnout, it sets stopped while holding state_mutex.
+It then releases that mutex before broadcasting on the condition variable. This
+avoids holding unrelated mutexes simultaneously and reduces the risk of lock
+order inversion.
 
-## リソース (Resources)
+## Resources
 
-### 参考資料
+### References
 
-- [POSIX Threads overview](https://man7.org/linux/man-pages/man7/pthreads.7.html)
-- [pthread_mutex_lock / pthread_mutex_unlock](https://man7.org/linux/man-pages/man3/pthread_mutex_lock.3.html)
-- [pthread_cond_wait / pthread_cond_timedwait](https://man7.org/linux/man-pages/man3/pthread_cond_wait.3p.html)
+- [POSIX threads overview](https://man7.org/linux/man-pages/man7/pthreads.7.html)
+- [pthread mutex operations](https://man7.org/linux/man-pages/man3/pthread_mutex_lock.3p.html)
+- [pthread condition variables](https://man7.org/linux/man-pages/man3/pthread_cond_wait.3p.html)
 - [clock_gettime](https://man7.org/linux/man-pages/man2/clock_gettime.2.html)
 - [Valgrind User Manual](https://valgrind.org/docs/manual/manual-intro.html)
-- [Valgrind Helgrind Manual](https://valgrind.org/docs/manual/hg-manual.html/hg-manual.html)
-- [Valgrind DRD Manual](https://valgrind.org/docs/manual/drd-manual.html/hg-manual.html)
-- [C言語でのマルチスレッド入門](https://daeudaeu.com/multithread/)
-- [POSIXスレッド（C言語）](https://segakuin.com/linux/library/pthread.html)
+- [Valgrind Helgrind Manual](https://valgrind.org/docs/manual/hg-manual.html)
+- [Valgrind DRD Manual](https://valgrind.org/docs/manual/drd-manual.html)
+- [Introduction to multithreading in C](https://daeudaeu.com/multithread/)
 
-### AIの活用
+### Use of AI
 
-AIは、設計の検討、コードレビュー、テストケースの作成、問題の切り分けを支援するために使用しました。
+AI was used to support design discussions, code review, test-case planning,
+debugging, and requirement verification. In particular, it assisted with:
 
-主な使用箇所は以下のとおりです。
+- reviewing parser boundaries and overflow handling;
+- reviewing the coder, dongle, and simulation data structures;
+- discussing the custom binary heap and FIFO/EDF scheduler design;
+- clarifying the responsibilities of mutexes and condition variables;
+- reviewing deadlock, starvation, cooldown, and burnout handling;
+- debugging the start barrier, linker errors, and Norm errors;
+- interpreting Valgrind, Helgrind, and DRD results;
+- comparing the implementation with the project requirements; and
+- organizing and proofreading this README.
 
-- parserの境界値とオーバーフロー処理の確認
-- coder、dongle、simulation構造体の設計レビュー
-- FIFO/EDF用binary heapとschedulerの設計検討
-- mutexとcondition variableの責務整理
-- deadlock、starvation、cooldown、burnout処理の確認
-- start barrier、linker error、Norm errorのデバッグ
-- Valgrind、Helgrind、DRDの結果分析
-- 課題要件と実装内容の照合
-- READMEの構成整理と文章の校正
-
-AIから提示された設計案やコード例は、その内容を確認したうえで実装へ反映し、コンパイル、Norminette、実行テスト、Valgrindなどを使って検証しました。
+All AI suggestions and code examples were reviewed before use. The resulting
+implementation was validated through compilation, Norminette, execution tests,
+and Valgrind-based checks.
